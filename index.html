@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百家姓溯源 - AI 姓氏文化探索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --text: #333;
+            --text-light: #666;
+            --bg: #f8f9fa;
+            --white: #fff;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            min-height: 100vh;
+            color: var(--text);
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+        }
+        
+        /* 首页 */
+        .page-home {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 48px;
+        }
+        
+        .input-group {
+            width: 100%;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        
+        .surname-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .surname-input:focus {
+            border-color: var(--primary);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--white);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            margin-top: 32px;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        
+        /* 预览页 / 报告页 */
+        .page-detail {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 60px 24px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+        
+        .header-back {
+            position: absolute;
+            top: 20px;
+            left: 16px;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .surname-big {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .surname-origin {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 24px;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+        
+        .locked-content {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 12px;
+        }
+        
+        .lock-icon {
+            font-size: 24px;
+            color: #FF6B6B;
+        }
+        
+        .btn-pay {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            background: linear-gradient(135deg, #FF6B6B, #ff8e53);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        .btn-pay-small {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .features {
+            margin-top: 24px;
+        }
+        
+        .features-title {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        
+        /* 起名页 */
+        .page-names {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .gender-select {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .gender-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 15px;
+            background: var(--white);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .gender-btn.active {
+            border-color: var(--primary);
+            background: rgba(102,126,234,0.1);
+            color: var(--primary);
+        }
+        
+        .keyword-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .keyword-input:focus {
+            border-color: var(--primary);
+        }
+        
+        .name-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--white);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .name-main {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .name-meaning {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        
+        .name-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #eee;
+            background: var(--white);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* 底部导航 */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 24px;
+            background: var(--white);
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* 模拟数据提示 */
+        .mock-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #FFF3CD;
+            color: #856404;
+            font-size: 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 -->
+        <div class="page page-home active" id="page-home">
+            <div class="logo">🏮</div>
+            <h1 class="title">百家姓溯源</h1>
+            <p class="subtitle">探索姓氏背后的文化密码</p>
+            
+            <div class="input-group">
+                <label class="input-label">请输入您的姓氏</label>
+                <input type="text" class="surname-input" id="surnameInput" maxlength="4" placeholder="例如：林">
+                <button class="btn-primary" id="startBtn" disabled>开始溯源</button>
+            </div>
+            
+            <p class="stats">🔥 已有 128,934 人溯源</p>
+        </div>
+        
+        <!-- 预览页 -->
+        <div class="page page-detail" id="page-preview">
+            <div class="header">
+                <span class="header-back" onclick="goHome()">←</span>
+                <div class="surname-big" id="previewSurname">林</div>
+                <div class="surname-origin" id="previewOrigin">林氏 · 源自姬姓</div>
+            </div>
+            
+            <div class="content">
+                <div class="card">
+                    <div class="card-title">📖 姓氏起源</div>
+                    <div class="card-content" id="previewContent">
+                        林姓主要源于子姓，出自商朝末年王子比干之后。比干被纣王剖心后，其夫人陈氏逃难至长林山，生子泉。周武王灭商后，赐姓林氏...
+                    </div>
+                    <div class="locked-content">
+                        <span class="lock-icon">🔒</span>
+                        <p style="margin-top:8px;color:#666;">付费解锁完整版</p>
+                    </div>
+                </div>
+                
+                <button class="btn-pay" id="unlockBtn">¥9.9 解锁完整报告</button>
+                
+                <div class="features">
+                    <p class="features-title">💡 完整报告包含：</p>
+                    <div class="feature-item">• 家族迁徙路线</div>
+                    <div class="feature-item">• 历史名人故事</div>
+                    <div class="feature-item">• 家族辈分传统</div>
+                    <div class="feature-item">• AI 智能起名</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 报告页 -->
+        <div class="page page-detail" id="page-report">
+            <div class="header">
+                <span class="header-back" onclick="goPreview()">←</span>
+                <div class="surname-big" id="reportSurname">林</div>
+                <div class="surname-origin">您的家族故事</div>
+            </div>
+            
+            <div class="content">
+                <span class="mock-badge">📱 MVP 版本</span>
+                
+                <div class="card">
+                    <div class="card-title">🗺️ 家族迁徙路线</div>
+                    <div class="card-content">
+                        1. 起源：河南淇县（商朝）<br>
+                        2. 秦汉：迁徙至山东济南<br>
+                        3. 晋代：渡江进入江苏、浙江<br>
+                        4. 唐宋：分布至福建、广东<br>
+                        5. 明清：遍及全国乃至海外
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📜 起源与演变</div>
+                    <div class="card-content">
+                        林姓是中国最古老的姓氏之一，历史超过3000年。始祖林坚为比干之子，被周武王赐姓林。此后林姓逐渐发展壮大，成为林姓人口约1400万，是中国第十六大姓。
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">👤 历史名人</div>
+                    <div class="card-content">
+                        • 林则徐 - 清朝名臣，禁烟英雄<br>
+                        • 林徽因 - 著名建筑师、诗人<br>
+                        • 林彪 - 军事家<br>
+                        • 林则徐 - 清朝名臣
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📋 家族辈分表</div>
+                    <div class="card-content">
+                        传统辈分用字：永/绍/继/承/守/祖/德/功/仁/义
+                    </div>
+                </div>
+                
+                <button class="btn-pay" onclick="goNames()">🤖 AI 智能起名</button>
+            </div>
+            
+            <div class="bottom-actions">
+                <button class="btn-secondary">📤 分享到朋友圈</button>
+            </div>
+        </div>
+        
+        <!-- AI 起名页 -->
+        <div class="page page-names" id="page-names">
+            <div class="header">
+                <span class="header-back" onclick="goReport()">←</span>
+                <div style="font-size:24px;font-weight:600;">AI 智能起名</div>
+            </div>
+            
+            <div class="content">
+                <div class="form-group">
+                    <label class="form-label">宝宝性别</label>
+                    <div class="gender-select">
+                        <button class="gender-btn active" data-gender="boy">👦 男</button>
+                        <button class="gender-btn" data-gender="girl">👧 女</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">期望寓意（可选）</label>
+                    <input type="text" class="keyword-input" placeholder="如：聪明、健康、勇敢">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">家族辈分（可选）</label>
+                    <input type="text" class="keyword-input" placeholder="如：永、绍、继">
+                </div>
+                
+                <button class="btn-pay" onclick="generateNames()">🎲 生成名字</button>
+                
+                <div id="namesList" style="margin-top:24px;">
+                    <!-- 名字列表 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 姓氏数据（模拟）
+        const surnameData = {
+            '林': { origin: '林氏 · 源自姬姓', content: '林姓主要源于子姓，出自商朝末年王子比干之后。比干被纣王剖心后，其夫人陈氏逃难至长林山，生子泉。周武王灭商后，赐姓林氏。' },
+            '陈': { origin: '陈氏 · 源自妫姓', content: '陈姓起源于妫姓，是舜帝后裔。周武王灭商后，封舜帝后裔胡公满于陈国，后代以国为姓。' },
+            '张': { origin: '张氏 · 源自姬姓', content: '张姓起源于姬姓，黄帝之子少昊青阳氏第五子挥为弓正，发明弓箭，被赐姓张。' },
+            '李': { origin: '李氏 · 源自理姓', content: '李姓起源于理姓，皋陶后裔理利贞避难于李树下，取李为姓。' },
+            '王': { origin: '王氏 · 源自姬姓', content: '王姓主要源于姬姓，周灵王太子晋后裔以王为姓。' }
+        };
+        
+        const boyNames = ['永哲', '永熙', '永瑞', '绍铭', '继轩', '承宇', '守耀', '祖浩', '德霖', '浩然', '俊杰', '子墨'];
+        const girlNames = ['思涵', '思婷', '欣怡', '雨晴', '诗涵', '雅静', '欣悦', '梦琪', '芷若', '清涵', '雪晴', '佳怡'];
+        const meanings = ['智慧深邃', '光明磊落', '吉祥如意', '才华出众', '品德高尚', '前程似锦'];
+        
+        // DOM 元素
+        const surnameInput = document.getElementById('surnameInput');
+        const startBtn = document.getElementById('startBtn');
+        
+        // 首页交互
+        surnameInput.addEventListener('input', () => {
+            startBtn.disabled = surnameInput.value.trim().length === 0;
+        });
+        
+        startBtn.addEventListener('click', () => {
+            const surname = surnameInput.value.trim();
+            if (surname && surnameData[surname]) {
+                showPreview(surname);
+            } else {
+                // 模拟数据，默认用林
+                showPreview('林');
+            }
+        });
+        
+        // 页面切换
+        function showPreview(surname) {
+            document.getElementById('page-home').classList.remove('active');
+            document.getElementById('page-preview').classList.add('active');
+            document.getElementById('previewSurname').textContent = surname;
+            document.getElementById('previewOrigin').textContent = surnameData[surname]?.origin || '林氏 · 源自姬姓';
+        }
+        
+        function goHome() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-home').classList.add('active');
+        }
+        
+        function goPreview() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-preview').classList.add('active');
+        }
+        
+        function goReport() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-report').classList.add('active');
+        }
+        
+        function goNames() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-names').classList.add('active');
+        }
+        
+        // 付费解锁（模拟）
+        document.getElementById('unlockBtn').addEventListener('click', () => {
+            alert('💳 支付成功！欢迎解锁完整报告');
+            goReport();
+        });
+        
+        // 性别选择
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        // 生成名字
+        function generateNames() {
+            const isBoy = document.querySelector('.gender-btn.active').dataset.gender === 'boy';
+            const names = isBoy ? boyNames : girlNames;
+            const list = document.getElementById('namesList');
+            
+            list.innerHTML = '<div style="margin-bottom:16px;font-weight:600;">🌟 推荐结果</div>';
+            
+            for (let i = 0; i < 6; i++) {
+                const name = names[Math.floor(Math.random() * names.length)];
+                const meaning = meanings[Math.floor(Math.random() * meanings.length)];
+                list.innerHTML += `
+                    <div class="name-card">
+                        <div>
+                            <div class="name-main">${name}</div>
+                            <div class="name-meaning">寓意：${meaning}</div>
+                        </div>
+                        <div class="name-actions">
+                            <button class="btn-icon">❤️</button>
+                            <button class="btn-icon">📤</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // 初始生成一波名字
+        generateNames();
+    </script>
+</body>
+</html>
